@@ -41,16 +41,16 @@ public final class BlockBrawlersScreen extends Screen {
         clearChildren();
         int center = width / 2;
         if (!playing) {
-            int top = height / 2 - 62;
+            int top = height / 2 + 48;
             addDrawableChild(ButtonWidget.builder(Text.literal("CHANGE FIGHTER  <  " + selectedFighter + "  >"), b -> {
                 fighterIndex = (fighterIndex + 1) % FIGHTERS.length;
                 selectedFighter = FIGHTERS[fighterIndex];
                 init();
             }).dimensions(center - 112, top, 224, 26).build());
             addDrawableChild(ButtonWidget.builder(Text.literal("PLAY MATCH"), b -> startMatch())
-                    .dimensions(center - 90, top + 40, 180, 34).build());
+                    .dimensions(center - 90, top + 36, 180, 34).build());
             addDrawableChild(ButtonWidget.builder(Text.literal("CLOSE"), b -> close())
-                    .dimensions(center - 60, top + 84, 120, 22).build());
+                    .dimensions(center - 60, top + 76, 120, 22).build());
         } else if (gameOver) {
             addDrawableChild(ButtonWidget.builder(Text.literal("PLAY AGAIN"), b -> startMatch())
                     .dimensions(center - 82, height / 2 + 40, 164, 30).build());
@@ -199,9 +199,9 @@ public final class BlockBrawlersScreen extends Screen {
         drawFighter(context, cx + 38, top + 126, 0xFF65B9FF, "V");
         drawFighter(context, cx + 115, top + 126, 0xFFC69BFF, "N");
         context.drawCenteredTextWithShadow(textRenderer, Text.literal(ROLES[fighterIndex]), cx, top + 163, 0xFFB8C7DC);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("WASD  Move     •     LMB  Attack"), cx, top + 206, 0xFFFFFFFF);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("RMB  Power burst     •     Defeat all 3 rivals"), cx, top + 224, 0xFFFFFFFF);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Offline practice match — no account required"), cx, top + 258, 0xFF9EADC2);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("WASD  Move     •     LMB  Attack"), cx, top + 185, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("RMB  Power burst     •     Defeat all 3 rivals"), cx, top + 202, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Offline practice match — no account required"), cx, top + 220, 0xFF9EADC2);
     }
 
     private void renderArena(DrawContext context) {
