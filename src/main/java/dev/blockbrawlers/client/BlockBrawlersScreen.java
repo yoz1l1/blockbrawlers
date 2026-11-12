@@ -35,6 +35,14 @@ public final class BlockBrawlersScreen extends Screen {
     private boolean victory = false;
     private float playerX, playerY, playerHealth = 100;
     private int attackCooldown, abilityCooldown, dashCooldown, invulnerableTicks, elapsedTicks, kills;
+    private int effectTicks;
+    private float effectX, effectY;
+    private int effectColor = 0xFFFFFFFF;
+    private boolean playerHidden;
+    private static final int[] ATTACK_DAMAGE = {34, 24, 28, 22};
+    private static final float[] ATTACK_RANGE = {105, 78, 145, 190};
+    private static final int[] SUPER_DAMAGE = {76, 48, 62, 54};
+    private static final float[] SUPER_RANGE = {125, 155, 175, 220};
     private final List<Enemy> enemies = new ArrayList<>();
 
     public BlockBrawlersScreen() {
@@ -122,6 +130,8 @@ public final class BlockBrawlersScreen extends Screen {
         client.options.leftKey.setPressed(false);
         client.options.rightKey.setPressed(false);
         elapsedTicks++;
+        if (effectTicks > 0) effectTicks--;
+        playerHidden = inBush(playerX, playerY);
         if (attackCooldown > 0) attackCooldown--;
         if (abilityCooldown > 0) abilityCooldown--;
         if (dashCooldown > 0) dashCooldown--;
@@ -139,6 +149,7 @@ public final class BlockBrawlersScreen extends Screen {
         }
 
         for (Enemy enemy : enemies) {
+            if (playerHidden) continue;
             double ex = playerX - enemy.x, ey = playerY - enemy.y;
             double distance = Math.hypot(ex, ey);
             if (distance > 28) {
@@ -155,6 +166,13 @@ public final class BlockBrawlersScreen extends Screen {
         while (it.hasNext()) if (it.next().health <= 0) { it.remove(); kills++; }
         if (playerHealth <= 0) finishMatch(false);
         else if (enemies.isEmpty()) finishMatch(true);
+    }
+
+    private boolean inBush(float x, float y) {
+        return inRect(x, y, width / 2 - 220, height / 2 - 135, 82, 58)
+                || inRect(x, y, width / 2 + 145, height / 2 - 125, 82, 58)
+                || inRect(x, y, width / 2 - 45, height / 2 + 155, 82, 58)
+                || inRect(x, y, width / 2 + 220, height / 2 + 105, 72, 58);
     }
 
     private boolean insideObstacle(float x, float y) {
@@ -219,7 +237,7 @@ public final class BlockBrawlersScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (playing && !gameOver) {
             if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && attackCooldown <= 0) {
-                attackAt(mouseX, mouseY, 34, 82); attackCooldown = 12; return true;
+                attackAt(mouseX, mouseY, ATTACK_DAMAGE[fighterIndex], ATTACK_RANGE[fighterIndex]); attackCooldown = 12; return true;
             }
             if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) { usePower(); return true; }
         }
@@ -228,7 +246,9 @@ public final class BlockBrawlersScreen extends Screen {
 
     private void usePower() {
         if (abilityCooldown > 0) return;
-        attackAt(playerX, playerY, 54, 116);
+        int i = fighterIndex;
+        attackAt(playerX, playerY, SUPER_DAMAGE[i], SUPER_RANGE[i]);
+        effectTicks = 18; effectX = playerX; effectY = playerY; effectColor = COLORS[i];
         abilityCooldown = 100;
     }
     private void dash() {
@@ -239,7 +259,7 @@ public final class BlockBrawlersScreen extends Screen {
         float nx = clamp(playerX + (float)(dx / len * 78), 26, width - 26);
         float ny = clamp(playerY + (float)(dy / len * 78), 54, height - 28);
         if (!insideObstacle(nx, ny)) { playerX = nx; playerY = ny; }
-        invulnerableTicks = 12; dashCooldown = 75;
+        invulnerableTicks = 12; dashCooldown = 75; effectTicks = 10; effectX = playerX; effectY = playerY; effectColor = 0xFFB8F5FF;
     }
     private void attackAt(double x, double y, int damage, double radius) {
         Enemy target = null; double best = Double.MAX_VALUE;
@@ -248,7 +268,7 @@ public final class BlockBrawlersScreen extends Screen {
             double playerDist = Math.hypot(e.x - playerX, e.y - playerY);
             if (clickDist < radius && playerDist < 245 && clickDist < best) { target = e; best = clickDist; }
         }
-        if (target != null) target.health -= damage;
+        if (target != null) { target.health -= damage; effectTicks = 7; effectX = target.x; effectY = target.y; effectColor = COLORS[fighterIndex]; }
     }
 
     @Override
@@ -307,11 +327,16 @@ public final class BlockBrawlersScreen extends Screen {
         drawObstacle(c, width / 2 - 92, height / 2 - 26);
         drawObstacle(c, width / 2 + 62, height / 2 + 46);
         drawObstacle(c, width / 2 - 176, height / 2 + 105);
+        drawBush(c, width / 2 - 220, height / 2 - 135);
+        drawBush(c, width / 2 + 145, height / 2 - 125);
+        drawBush(c, width / 2 - 45, height / 2 + 155);
+        drawBush(c, width / 2 + 220, height / 2 + 105);
         c.fill(0, 0, width, 36, 0xEE111B2A);
         c.drawTextWithShadow(textRenderer, Text.literal("БЛОКОВАЯ АРЕНА"), 12, 13, GOLD);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal("ПРОТИВНИКИ: " + enemies.size()), width / 2, 13, 0xFFFFFFFF);
         c.drawTextWithShadow(textRenderer, Text.literal("ПОБЕД: " + kills), width - 70, 13, 0xFFFFFFFF);
         healthBar(c, 14, 44, 132, 9, playerHealth, 100, 0xFF55D68B);
+        if (playerHidden) c.drawTextWithShadow(textRenderer, Text.literal("В КУСТАХ — ВАС НЕ ВИДНО"), 155, 44, 0xFF9BFFA9);
         c.drawTextWithShadow(textRenderer, Text.literal(FIGHTERS[fighterIndex]), 14, 56, 0xFFFFFFFF);
         c.drawTextWithShadow(textRenderer, Text.literal("ЛКМ — АТАКА   Q — СУПЕР   E — РЫВОК   ESC — МЕНЮ"), 14, height - 23, 0xFFFFFFFF);
         c.drawTextWithShadow(textRenderer, Text.literal("Q " + (abilityCooldown == 0 ? "ГОТОВО" : abilityCooldown / 20 + "s") + "   E " + (dashCooldown == 0 ? "ГОТОВО" : dashCooldown / 20 + "s")), width - 145, height - 23, GOLD);
@@ -319,8 +344,23 @@ public final class BlockBrawlersScreen extends Screen {
             healthBar(c, (int)e.x - 18, (int)e.y - 29, 36, 4, e.health, 100, 0xFFFF7777);
             drawHero(c, (int)e.x, (int)e.y, 1, 1, e.color);
         }
+        if (effectTicks > 0) {
+            int radius = Math.max(8, 46 - effectTicks * 2);
+            c.fill((int)effectX - radius, (int)effectY - radius, (int)effectX + radius, (int)effectY + radius, (effectColor & 0x00FFFFFF) | 0x44000000);
+            c.fill((int)effectX - 2, (int)effectY - radius - 5, (int)effectX + 2, (int)effectY + radius + 5, effectColor);
+            c.fill((int)effectX - radius - 5, (int)effectY - 2, (int)effectX + radius + 5, (int)effectY + 2, effectColor);
+        }
         int color = invulnerableTicks > 0 && (elapsedTicks / 3) % 2 == 0 ? 0xFFFFFFFF : COLORS[fighterIndex];
         drawHero(c, (int)playerX, (int)playerY, fighterIndex, 1, color);
+    }
+
+    private void drawBush(DrawContext c, int x, int y) {
+        c.fill(x, y + 12, x + 76, y + 42, 0xFF174D32);
+        c.fill(x + 5, y + 5, x + 34, y + 34, 0xFF2F8D4E);
+        c.fill(x + 25, y, x + 58, y + 34, 0xFF3BA65B);
+        c.fill(x + 48, y + 9, x + 76, y + 38, 0xFF287C45);
+        c.fill(x + 15, y + 13, x + 25, y + 21, 0xFF72C96B);
+        c.fill(x + 42, y + 8, x + 52, y + 17, 0xFF79D66D);
     }
 
     private void drawObstacle(DrawContext c, int x, int y) {
