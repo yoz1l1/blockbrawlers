@@ -188,8 +188,8 @@ public final class BlockBrawlersScreen extends Screen {
 
     private void renderMenu(DrawContext context) {
         int cx = width / 2;
-        int top = height / 2 - 142;
-        context.fill(cx - 190, top, cx + 190, top + 285, PANEL);
+        int top = height / 2 - 180;
+        context.fill(cx - 190, top, cx + 190, top + 360, PANEL);
         context.fill(cx - 190, top, cx + 190, top + 5, GOLD);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("BLOCK BRAWLERS"), cx, top + 22, 0xFFFFFFFF);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("QUICK ARENA • SOLO SURVIVAL"), cx, top + 44, GOLD);
@@ -201,7 +201,7 @@ public final class BlockBrawlersScreen extends Screen {
         context.drawCenteredTextWithShadow(textRenderer, Text.literal(ROLES[fighterIndex]), cx, top + 163, 0xFFB8C7DC);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("WASD  Move     •     LMB  Attack"), cx, top + 185, 0xFFFFFFFF);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("RMB  Power burst     •     Defeat all 3 rivals"), cx, top + 202, 0xFFFFFFFF);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Offline practice match — no account required"), cx, top + 220, 0xFF9EADC2);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Offline practice match — no account required"), cx, top + 238, 0xFF9EADC2);
     }
 
     private void renderArena(DrawContext context) {
