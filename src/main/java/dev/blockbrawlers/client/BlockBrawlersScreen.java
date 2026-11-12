@@ -50,7 +50,7 @@ public final class BlockBrawlersScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        renderBackground(context, mouseX, mouseY, delta);
         context.fill(0, 0, width, height, 0xB9080D18);
         int panelWidth = Math.min(440, width - 24);
         int panelLeft = (width - panelWidth) / 2;
