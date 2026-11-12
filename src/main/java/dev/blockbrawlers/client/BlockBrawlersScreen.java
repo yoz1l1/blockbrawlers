@@ -14,13 +14,13 @@ public final class BlockBrawlersScreen extends Screen {
     private static final int BG = 0xFF101827;
     private static final int PANEL = 0xF01B2940;
     private static final int GOLD = 0xFFFFD166;
-    private static final String[] FIGHTERS = {"EMBER", "MOSS", "VOLT", "NOVA"};
-    private static final String[] ROLES = {"FIRE DUELIST", "STONE GUARDIAN", "STORM RUNNER", "STAR MYSTIC"};
+    private static final String[] FIGHTERS = {"ИСКРА", "МОХ", "ГРОМ", "АСТРА"};
+    private static final String[] ROLES = {"ОГНЕННЫЙ БОЕЦ", "ЛЕСНОЙ ЗАЩИТНИК", "ГРОЗОВОЙ СКОРОХОД", "ЗВЁЗДНЫЙ МАГ"};
     private static final String[] LORE = {
-            "A fearless close-range fighter with explosive fire shots.",
-            "A sturdy protector who can take a hit and hold the line.",
-            "A fast striker who darts around the arena in a flash.",
-            "A ranged trickster who channels bright bursts of energy."
+            "Бьёт огненными зарядами вблизи и поджигает врагов суперударом.",
+            "Защищается каменной бронёй и оплетает врагов корнями.",
+            "Молниеносно атакует на средней дистанции и совершает рывки.",
+            "Посылает звёздные снаряды издалека и создаёт гравитационный всплеск."
     };
     private static final int[] COLORS = {0xFFFF875E, 0xFF62C99A, 0xFF65B9FF, 0xFFC69BFF};
 
@@ -28,7 +28,7 @@ public final class BlockBrawlersScreen extends Screen {
     private Page page = Page.HOME;
     private int fighterIndex = 0;
     private final StringBuilder friendName = new StringBuilder();
-    private String notice = "Invite a friend who is on the same Minecraft server.";
+    private String notice = "Пригласи друга, который играет на том же сервере Minecraft.";
     private boolean w, a, s, d;
     private boolean playing = false;
     private boolean gameOver = false;
@@ -38,7 +38,7 @@ public final class BlockBrawlersScreen extends Screen {
     private final List<Enemy> enemies = new ArrayList<>();
 
     public BlockBrawlersScreen() {
-        super(Text.literal("Block Brawlers"));
+        super(Text.literal("Блоковая арена"));
     }
 
     @Override
@@ -47,13 +47,13 @@ public final class BlockBrawlersScreen extends Screen {
         int cx = width / 2;
         if (page == Page.HOME) {
             int y = height / 2 + 64;
-            addDrawableChild(ButtonWidget.builder(Text.literal("CHOOSE BRAWLER"), b -> { page = Page.BRAWLERS; init(); })
+            addDrawableChild(ButtonWidget.builder(Text.literal("ВЫБРАТЬ БОЙЦА"), b -> { page = Page.BRAWLERS; init(); })
                     .dimensions(cx - 164, y, 156, 30).build());
-            addDrawableChild(ButtonWidget.builder(Text.literal("PLAY SOLO"), b -> startMatch())
+            addDrawableChild(ButtonWidget.builder(Text.literal("ОДИНОЧНАЯ ИГРА"), b -> startMatch())
                     .dimensions(cx + 8, y, 156, 30).build());
-            addDrawableChild(ButtonWidget.builder(Text.literal("FRIENDS  +"), b -> { page = Page.FRIENDS; init(); })
+            addDrawableChild(ButtonWidget.builder(Text.literal("ДРУЗЬЯ  +"), b -> { page = Page.FRIENDS; init(); })
                     .dimensions(cx - 164, y + 40, 156, 26).build());
-            addDrawableChild(ButtonWidget.builder(Text.literal("CLOSE"), b -> close())
+            addDrawableChild(ButtonWidget.builder(Text.literal("ВЫХОД"), b -> close())
                     .dimensions(cx + 8, y + 40, 156, 26).build());
         } else if (page == Page.BRAWLERS) {
             for (int i = 0; i < FIGHTERS.length; i++) {
@@ -65,17 +65,17 @@ public final class BlockBrawlersScreen extends Screen {
                     init();
                 }).dimensions(x, y, 160, 26).build());
             }
-            addDrawableChild(ButtonWidget.builder(Text.literal("BACK"), b -> { page = Page.HOME; init(); })
+            addDrawableChild(ButtonWidget.builder(Text.literal("НАЗАД"), b -> { page = Page.HOME; init(); })
                     .dimensions(cx - 65, height - 42, 130, 22).build());
         } else if (page == Page.FRIENDS) {
-            addDrawableChild(ButtonWidget.builder(Text.literal("SEND INVITE"), b -> sendInvite())
+            addDrawableChild(ButtonWidget.builder(Text.literal("ОТПРАВИТЬ ПРИГЛАШЕНИЕ"), b -> sendInvite())
                     .dimensions(cx - 80, height / 2 + 36, 160, 28).build());
-            addDrawableChild(ButtonWidget.builder(Text.literal("BACK"), b -> { page = Page.HOME; init(); })
+            addDrawableChild(ButtonWidget.builder(Text.literal("НАЗАД"), b -> { page = Page.HOME; init(); })
                     .dimensions(cx - 65, height / 2 + 76, 130, 22).build());
         } else if (page == Page.MATCH && gameOver) {
-            addDrawableChild(ButtonWidget.builder(Text.literal("PLAY AGAIN"), b -> startMatch())
+            addDrawableChild(ButtonWidget.builder(Text.literal("ИГРАТЬ СНОВА"), b -> startMatch())
                     .dimensions(cx - 82, height / 2 + 42, 164, 30).build());
-            addDrawableChild(ButtonWidget.builder(Text.literal("MAIN MENU"), b -> {
+            addDrawableChild(ButtonWidget.builder(Text.literal("ГЛАВНОЕ МЕНЮ"), b -> {
                 playing = false; gameOver = false; page = Page.HOME; init();
             }).dimensions(cx - 82, height / 2 + 80, 164, 24).build());
         }
@@ -84,19 +84,19 @@ public final class BlockBrawlersScreen extends Screen {
     private void sendInvite() {
         String name = friendName.toString().trim();
         if (name.isEmpty() || !name.matches("[A-Za-z0-9_]{1,16}")) {
-            notice = "Enter a valid Minecraft nickname (1–16 letters, numbers or _).";
+            notice = "Введи ник Minecraft (1–16 латинских букв, цифр или _).";
             return;
         }
         if (client == null || client.player == null || client.getNetworkHandler() == null) {
-            notice = "Join a multiplayer server before inviting a friend.";
+            notice = "Сначала зайди на многопользовательский сервер.";
             return;
         }
         if (name.equalsIgnoreCase(client.player.getGameProfile().getName())) {
-            notice = "You cannot invite yourself.";
+            notice = "Нельзя отправить приглашение самому себе.";
             return;
         }
-        client.getNetworkHandler().sendChatCommand("msg " + name + " Join my Block Brawlers match! Open the mod with B.");
-        notice = "Invite message sent to " + name + " through this server's chat.";
+        client.getNetworkHandler().sendChatCommand("msg " + name + " Заходи в мой бой! Открой мод клавишей B.");
+        notice = "Приглашение отправлено игроку " + name + " через чат сервера.";
     }
 
     private void startMatch() {
@@ -171,7 +171,7 @@ public final class BlockBrawlersScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (page == Page.FRIENDS && !playing) {
-            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+            if (keyCode == GLFW.GLFW_KEY_НАЗАДSPACE) {
                 if (!friendName.isEmpty()) friendName.deleteCharAt(friendName.length() - 1);
                 return true;
             }
@@ -266,37 +266,37 @@ public final class BlockBrawlersScreen extends Screen {
         int cx = width / 2, top = height / 2 - 170;
         c.fill(cx - 235, top, cx + 235, top + 330, PANEL);
         c.fill(cx - 235, top, cx + 235, top + 5, GOLD);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("BLOCK BRAWLERS"), cx, top + 22, 0xFFFFFFFF);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("PICK A FIGHTER. OWN THE ARENA."), cx, top + 43, GOLD);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("БЛОКОВАЯ АРЕНА"), cx, top + 22, 0xFFFFFFFF);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("ВЫБЕРИ БОЙЦА. ЗАХВАТИ АРЕНУ."), cx, top + 43, GOLD);
         drawHero(c, cx, top + 144, fighterIndex, 3);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(FIGHTERS[fighterIndex]), cx, top + 203, 0xFFFFFFFF);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(ROLES[fighterIndex]), cx, top + 220, GOLD);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(LORE[fighterIndex]), cx, top + 239, 0xFFD4DEED);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("WASD MOVE   •   LMB ATTACK   •   Q POWER   •   E DASH"), cx, top + 278, 0xFFB8C7DC);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("WASD — ДВИЖЕНИЕ   •   ЛКМ — АТАКА   •   Q — СУПЕР   •   E — РЫВОК"), cx, top + 278, 0xFFB8C7DC);
     }
 
     private void renderBrawlers(DrawContext c) {
         int cx = width / 2, top = height / 2 - 170;
         c.fill(cx - 235, top, cx + 235, top + 330, PANEL);
         c.fill(cx - 235, top, cx + 235, top + 5, GOLD);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("THE ROSTER"), cx, top + 20, 0xFFFFFFFF);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("КОЛЛЕКЦИЯ БОЙЦОВ"), cx, top + 20, 0xFFFFFFFF);
         drawHero(c, cx, top + 118, fighterIndex, 2);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(FIGHTERS[fighterIndex]), cx, top + 170, 0xFFFFFFFF);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(ROLES[fighterIndex]), cx, top + 188, GOLD);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(LORE[fighterIndex]), cx, top + 207, 0xFFD4DEED);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Select a champion below"), cx, top + 235, 0xFFB8C7DC);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Выбери бойца в списке ниже"), cx, top + 235, 0xFFB8C7DC);
     }
 
     private void renderFriends(DrawContext c) {
         int cx = width / 2, top = height / 2 - 110;
         c.fill(cx - 205, top, cx + 205, top + 220, PANEL);
         c.fill(cx - 205, top, cx + 205, top + 5, GOLD);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("PLAY WITH A FRIEND"), cx, top + 22, 0xFFFFFFFF);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Minecraft nickname"), cx, top + 65, 0xFFD4DEED);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("ИГРА С ДРУГОМ"), cx, top + 22, 0xFFFFFFFF);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Ник игрока Minecraft"), cx, top + 65, 0xFFD4DEED);
         c.fill(cx - 105, top + 82, cx + 105, top + 108, 0xFF0D1725);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(friendName + (elapsedTicks % 20 < 10 ? "_" : "")), cx, top + 91, 0xFFFFFFFF);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Both players must be on the same server."), cx, top + 130, 0xFFB8C7DC);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Invite uses server chat; shared matches are still in development."), cx, top + 149, 0xFF9EADC2);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Оба игрока должны быть на одном сервере."), cx, top + 130, 0xFFB8C7DC);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Приглашение отправляется через чат. Совместные матчи ещё разрабатываются."), cx, top + 149, 0xFF9EADC2);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(notice), cx, top + 181, 0xFFFFD166);
     }
 
@@ -308,13 +308,13 @@ public final class BlockBrawlersScreen extends Screen {
         drawObstacle(c, width / 2 + 62, height / 2 + 46);
         drawObstacle(c, width / 2 - 176, height / 2 + 105);
         c.fill(0, 0, width, 36, 0xEE111B2A);
-        c.drawTextWithShadow(textRenderer, Text.literal("BLOCK BRAWLERS"), 12, 13, GOLD);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("RIVALS " + enemies.size()), width / 2, 13, 0xFFFFFFFF);
-        c.drawTextWithShadow(textRenderer, Text.literal("KOs " + kills), width - 70, 13, 0xFFFFFFFF);
+        c.drawTextWithShadow(textRenderer, Text.literal("БЛОКОВАЯ АРЕНА"), 12, 13, GOLD);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("ПРОТИВНИКИ: " + enemies.size()), width / 2, 13, 0xFFFFFFFF);
+        c.drawTextWithShadow(textRenderer, Text.literal("ПОБЕД: " + kills), width - 70, 13, 0xFFFFFFFF);
         healthBar(c, 14, 44, 132, 9, playerHealth, 100, 0xFF55D68B);
         c.drawTextWithShadow(textRenderer, Text.literal(FIGHTERS[fighterIndex]), 14, 56, 0xFFFFFFFF);
-        c.drawTextWithShadow(textRenderer, Text.literal("LMB ATTACK   Q POWER   E DASH   ESC MENU"), 14, height - 23, 0xFFFFFFFF);
-        c.drawTextWithShadow(textRenderer, Text.literal("Q " + (abilityCooldown == 0 ? "READY" : abilityCooldown / 20 + "s") + "   E " + (dashCooldown == 0 ? "READY" : dashCooldown / 20 + "s")), width - 145, height - 23, GOLD);
+        c.drawTextWithShadow(textRenderer, Text.literal("ЛКМ — АТАКА   Q — СУПЕР   E — РЫВОК   ESC — МЕНЮ"), 14, height - 23, 0xFFFFFFFF);
+        c.drawTextWithShadow(textRenderer, Text.literal("Q " + (abilityCooldown == 0 ? "ГОТОВО" : abilityCooldown / 20 + "s") + "   E " + (dashCooldown == 0 ? "ГОТОВО" : dashCooldown / 20 + "s")), width - 145, height - 23, GOLD);
         for (Enemy e : enemies) {
             healthBar(c, (int)e.x - 18, (int)e.y - 29, 36, 4, e.health, 100, 0xFFFF7777);
             drawHero(c, (int)e.x, (int)e.y, 1, 1, e.color);
@@ -359,9 +359,9 @@ public final class BlockBrawlersScreen extends Screen {
 
     private void renderResults(DrawContext c) {
         c.fill(width / 2 - 130, height / 2 - 75, width / 2 + 130, height / 2 + 112, 0xF0182438);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal(victory ? "ARENA CLEARED!" : "MATCH OVER"), width / 2, height / 2 - 48, victory ? GOLD : 0xFFFF7777);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Rivals defeated: " + kills + " / 3"), width / 2, height / 2 - 20, 0xFFFFFFFF);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Time: " + elapsedTicks / 20 + " seconds"), width / 2, height / 2 + 1, 0xFFDCE7F7);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal(victory ? "АРЕНА ЗАЧИЩЕНА!" : "БОЙ ОКОНЧЕН"), width / 2, height / 2 - 48, victory ? GOLD : 0xFFFF7777);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Побеждено врагов: " + kills + " / 3"), width / 2, height / 2 - 20, 0xFFFFFFFF);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Время: " + elapsedTicks / 20 + " сек."), width / 2, height / 2 + 1, 0xFFDCE7F7);
     }
 
     @Override public boolean shouldPause() { return false; }
