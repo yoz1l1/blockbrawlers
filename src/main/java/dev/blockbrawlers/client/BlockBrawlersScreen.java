@@ -57,13 +57,13 @@ public final class BlockBrawlersScreen extends Screen {
         int panelTop = Math.max(22, height / 2 - 128);
         context.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + 260, PANEL);
         context.fill(panelLeft, panelTop, panelLeft + panelWidth, panelTop + 4, ACCENT);
-        context.drawCenteredTextWithShadow(textRenderer, "BLOCK BRAWLERS", width / 2, panelTop + 15, 0xFFFFFFFF);
-        context.drawCenteredTextWithShadow(textRenderer, "A new arena. Your world. Your crew.", width / 2, panelTop + 34, 0xFFB8C4D9);
-        context.drawCenteredTextWithShadow(textRenderer, "SELECT YOUR FIGHTER", width / 2, panelTop + 59, ACCENT);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("BLOCK BRAWLERS"), width / 2, panelTop + 15, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("A new arena. Your world. Your crew."), width / 2, panelTop + 34, 0xFFB8C4D9);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("SELECT YOUR FIGHTER"), width / 2, panelTop + 59, ACCENT);
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, "Selected: " + selectedFighter, width / 2, panelTop + 211, 0xFFFFFFFF);
-        context.drawCenteredTextWithShadow(textRenderer, status, width / 2, panelTop + 230, 0xFFB8C4D9);
-        context.drawCenteredTextWithShadow(textRenderer, "Press B to open  •  Esc to close", width / 2, height - 16, 0xFF8E9AAF);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Selected: " + selectedFighter), width / 2, panelTop + 211, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal(status), width / 2, panelTop + 230, 0xFFB8C4D9);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Press B to open  •  Esc to close"), width / 2, height - 16, 0xFF8E9AAF);
     }
 
     @Override
