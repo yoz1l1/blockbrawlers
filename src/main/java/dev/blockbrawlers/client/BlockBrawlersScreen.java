@@ -189,7 +189,7 @@ public final class BlockBrawlersScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (page == Page.FRIENDS && !playing) {
-            if (keyCode == GLFW.GLFW_KEY_НАЗАДSPACE) {
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
                 if (!friendName.isEmpty()) friendName.deleteCharAt(friendName.length() - 1);
                 return true;
             }
