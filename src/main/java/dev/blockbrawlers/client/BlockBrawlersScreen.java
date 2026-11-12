@@ -258,8 +258,8 @@ public final class BlockBrawlersScreen extends Screen {
         else if (page == Page.BRAWLERS) renderBrawlers(context);
         else if (page == Page.FRIENDS) renderFriends(context);
         else renderArena(context);
-        super.render(context, mouseX, mouseY, delta);
         if (page == Page.MATCH && gameOver) renderResults(context);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     private void renderHome(DrawContext c) {
@@ -296,7 +296,7 @@ public final class BlockBrawlersScreen extends Screen {
         c.fill(cx - 105, top + 82, cx + 105, top + 108, 0xFF0D1725);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(friendName + (elapsedTicks % 20 < 10 ? "_" : "")), cx, top + 91, 0xFFFFFFFF);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal("Both players must be on the same server."), cx, top + 130, 0xFFB8C7DC);
-        c.drawCenteredTextWithShadow(textRenderer, Text.literal("This sends a normal private server chat message."), cx, top + 149, 0xFF9EADC2);
+        c.drawCenteredTextWithShadow(textRenderer, Text.literal("Invite uses server chat; shared matches are still in development."), cx, top + 149, 0xFF9EADC2);
         c.drawCenteredTextWithShadow(textRenderer, Text.literal(notice), cx, top + 181, 0xFFFFD166);
     }
 
