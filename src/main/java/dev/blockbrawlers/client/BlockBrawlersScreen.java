@@ -303,7 +303,7 @@ public final class BlockBrawlersScreen extends Screen {
     private void renderArena(DrawContext c) {
         c.fill(12, 42, width - 12, height - 12, 0xFF24434A);
         for (int x = 20; x < width - 20; x += 32)
-            for (int y = 48; y < height - 18; y += 32) c.fill(x, y, x + 1, y + 1, 0x447FFFFFFF);
+            for (int y = 48; y < height - 18; y += 32) c.fill(x, y, x + 1, y + 1, 0x44FFFFFF);
         drawObstacle(c, width / 2 - 92, height / 2 - 26);
         drawObstacle(c, width / 2 + 62, height / 2 + 46);
         drawObstacle(c, width / 2 - 176, height / 2 + 105);
